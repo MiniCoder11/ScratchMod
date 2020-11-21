@@ -27,7 +27,7 @@
         var scratchVM = vm;
         window.vm = vm; // This allows experimentation in the console with the VM
 
-        document.addEventListener('keypress', function (event) {
+        document.addEventListener('keydown', function (event) {
             if (event.defaultPrevented) {
                 return;
             }
