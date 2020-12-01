@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         ScratchMod
 // @namespace    http://tampermonkey.net/
-// @version      0.1.8
+// @version      0.2.4
 // @description  Enhance the Scratch website with aesthetic and QoL changes.
 // @author       MiniCoder11
 // @match        https://*.scratch.mit.edu/*
@@ -84,11 +84,15 @@
     h4, a * {color: var(--blue) !important;}
     p {color: var(--text) !important;} /* Order is important here */
     .box-header {padding-top: 16px !important;}
-    .thumbnail.project .thumbnail-image img, .thumbnail.gallery img {border-radius: 8px;}
+    .thumbnail.project .thumbnail-image img, .thumbnail.gallery img {border-radius: 8px; border: none !important;}
     .splash .splash-header .box, .box {box-shadow: var(--panel-shadow);}
 
     #footer {background-color: var(--background-accent) !important; opacity: 0.9; backdrop-filter: blur(12px);}
     #donor {background: var(--editor-accent) !important;}
+
+    .preview .project-lower-container {background-color: #161620 !important;}
+    .comment-text, .comment .comment-body .comment-bubble, .preview .guiPlayer .project-info-alert, .comment .comment-body .comment-bubble::before {background-color: var(--background) !important;}
+    .inplace-textarea {background-color: var(--background) !important; color: var(--text) !important;}
     `);
         if (window.location.href.includes("editor")) {
             GM_addStyle(`
@@ -127,6 +131,12 @@
     a[href] {color: var(--blue) !important;}
     `);}
 
+        if (window.location.href.includes("messages")) {
+            GM_addStyle(`
+            .social-message, .messages-social-list {border: none !important; background-color: var(--editor-accent) !important;}
+        `)
+        }
+
         // ========================================= ScratchMod Experimental Features =========================================
         GM_addStyle(".sprite-selector_sprite-wrapper_1C5Mq { width: 380px !important; max-width: none !important; min-height: 0px !important; }");
 
@@ -143,12 +153,13 @@
 
         findVM().then(vm => {
             var scratchVM = vm;
-            window.vm = vm; // This allows experimentation in the console with the VM
+            window.vm = vm; // Exposes the VM to the console for experimentation
+
+            //scratchVM.setVariableValue(scratchVM.runtime.getSpriteTargetByName("scratchModCompat").id,scratchVM.runtime.getSpriteTargetByName("scratchModCompat").lookupVariableByNameAndType("scratchModEnabled").id,"True");
 
             document.addEventListener('keydown', function (event) {
                 var key = event.key || event.keyCode;
                 scratchVM.setVariableValue(scratchVM.runtime.getSpriteTargetByName("scratchModCompat").id,scratchVM.runtime.getSpriteTargetByName("scratchModCompat").lookupVariableByNameAndType("lastKeyPressed").id,key);
-                console.log(key);
             });
 
             formatLog("Info", "Styling complete.");
